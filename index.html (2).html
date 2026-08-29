@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CheckMate — Facebook Function MVP v2</title>
+<style>
+:root{--custard:#FEFFB6;--sky:#C3DAE8;--mocha:#432F2F;--cream:#FFFDF4;--white:#fff;--muted:#806f6f;--line:#eadfda;--success:#315f4c;--warning:#9a6736}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#f7f1e9,#e9f1f5);color:var(--mocha);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center;align-items:center;padding:28px}
+.stage{width:min(1180px,100%);display:grid;grid-template-columns:1fr 410px 1fr;gap:28px;align-items:center}.side{max-width:290px}.side h1{font-size:40px;line-height:1.02;margin:0 0 14px;letter-spacing:-1.8px}.side p{font-size:14px;line-height:1.6;color:#6f5f5f}.pill{display:inline-flex;background:#fff;border:1px solid #eadfda;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800}.flow{display:flex;flex-direction:column;gap:10px;margin-top:20px}.flow div{display:flex;align-items:center;gap:9px;font-size:12px}.dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--sky);font-size:11px;font-weight:800}.dot.active{background:var(--custard)}
+.phone{width:390px;height:844px;background:#161313;border-radius:42px;padding:10px;box-shadow:0 20px 60px rgba(67,47,47,.16);position:relative}.phone:before{content:"";position:absolute;top:17px;left:50%;transform:translateX(-50%);width:120px;height:24px;background:#161313;border-radius:20px;z-index:10}.screen{height:100%;background:var(--cream);border-radius:33px;overflow:hidden;position:relative}.fbbar{height:58px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #eee6e1}.fb-left{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}.fb-logo{width:28px;height:28px;border-radius:8px;background:var(--mocha);color:var(--custard);display:grid;place-items:center;font-size:16px}.fb-actions{display:flex;gap:7px}.fb-actions span{width:27px;height:27px;border-radius:50%;background:#f5f0ec;display:grid;place-items:center;font-size:12px}.app{height:calc(100% - 58px);overflow:auto;scrollbar-width:none}.app::-webkit-scrollbar{display:none}.view{display:none;min-height:100%;padding:22px 20px 28px}.view.active{display:block;animation:fade .18s ease}@keyframes fade{from{opacity:.4;transform:translateY(5px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:#8c7771}h2{font-size:27px;line-height:1.06;letter-spacing:-.8px;margin:7px 0 10px}h3{font-size:17px;margin:0 0 7px}.sub{font-size:12px;line-height:1.5;color:#776969;margin:0}.hero{background:var(--custard);border-radius:24px;padding:22px;margin:12px 0 16px;position:relative;overflow:hidden}.hero:after{content:"✓";position:absolute;right:-4px;bottom:-22px;font-size:112px;font-weight:900;opacity:.08}.cta{width:100%;border:0;border-radius:15px;padding:14px 16px;background:var(--mocha);color:#fff;font-weight:800;font-size:13px;cursor:pointer;margin-top:14px}.cta.light{background:var(--sky);color:var(--mocha)}.cta.custard{background:var(--custard);color:var(--mocha)}.ghost{background:#fff;color:var(--mocha);border:1px solid var(--line)}button{font-family:inherit}.back{border:0;background:none;padding:0;font-size:12px;font-weight:800;color:#806a62;cursor:pointer;margin-bottom:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:19px;padding:14px;box-shadow:0 5px 18px rgba(67,47,47,.05)}.stack{display:flex;flex-direction:column;gap:9px}.choice{width:100%;border:1px solid var(--line);background:#fff;border-radius:17px;padding:13px;text-align:left;display:flex;align-items:center;justify-content:space-between;cursor:pointer}.choice strong{font-size:12px;display:block}.choice span{font-size:10px;color:#8a7772}.choice:hover{border-color:#bfa9a1}.iconbox{width:38px;height:38px;border-radius:12px;background:var(--sky);display:grid;place-items:center;font-size:18px}.choice .right{font-size:18px}.section-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;margin:17px 0 8px}
+.scan{height:310px;border-radius:26px;background:#2f2a2a;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;color:#fff;margin:15px 0}.face{width:170px;height:220px;border:2px solid var(--custard);border-radius:50% 50% 46% 46%;position:relative;box-shadow:0 0 0 12px rgba(254,255,182,.05),0 0 50px rgba(254,255,182,.12)}.face:before,.face:after{content:"";position:absolute;top:88px;width:18px;height:7px;border-bottom:2px solid var(--sky)}.face:before{left:38px}.face:after{right:38px}.scanline{position:absolute;left:20px;right:20px;height:2px;background:var(--custard);box-shadow:0 0 14px var(--custard);animation:scan 2.1s linear infinite}@keyframes scan{0%{top:50px}50%{top:250px}100%{top:50px}}.scan-label{position:absolute;bottom:13px;left:0;right:0;text-align:center;font-size:10px;opacity:.85}
+.points{display:flex;align-items:center;gap:9px;background:#f7f1ed;border-radius:12px;padding:10px;font-size:10px}.status{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800}.status:before{content:"";width:7px;height:7px;border-radius:50%;background:#5e8b70}.warn:before{background:#b77b3f}.profile{display:flex;align-items:center;gap:11px;padding:13px;background:#fff;border:1px solid var(--line);border-radius:17px}.avatar{width:43px;height:43px;border-radius:50%;background:var(--sky);display:grid;place-items:center;font-weight:900}.form-row{margin-bottom:10px}.form-row label{display:block;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}input{width:100%;padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--mocha)}.upload{border:1.5px dashed #c8b9b3;border-radius:15px;padding:14px;text-align:center;background:#fffdfa;cursor:pointer}.upload strong{font-size:11px}.upload span{display:block;font-size:9px;color:#8a7772;margin-top:3px}
+
+.fb-menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fb-menu-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px 9px;display:flex;align-items:center;gap:8px;color:var(--mocha);cursor:pointer;text-align:left}.fb-menu-item span{width:27px;height:27px;border-radius:8px;background:#f5efeb;display:grid;place-items:center;font-size:13px;flex:none}.fb-menu-item b{font-size:10px}.fb-menu-item.checkmate-item{grid-column:1/-1;border:2px solid #8b68df;background:#fff}.fb-menu-item.checkmate-item span{background:#eee8ff;color:#6844bd}
+.seller-uploaded{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.uploaded-proof{border:1px solid var(--line);background:#fff;border-radius:13px;overflow:hidden}.uploaded-proof .proof-photo{height:72px;background:linear-gradient(135deg,#ddd8d2,#f2ede8);display:grid;place-items:center;font-size:25px}.uploaded-proof .proof-caption{padding:7px;font-size:8px;line-height:1.3}.uploaded-proof b{display:block;font-size:9px;margin-bottom:2px}
+.product{display:flex;gap:11px;align-items:center}.product-img{width:66px;height:66px;border-radius:15px;background:linear-gradient(145deg,#e7e4df,#c8c0ba);display:grid;place-items:center;font-size:27px}.meta{flex:1}.meta h3{font-size:13px}.price{font-weight:900;font-size:13px;margin-top:3px}.note{font-size:9px;color:#8a7772;line-height:1.4}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.tag{font-size:9px;font-weight:800;border-radius:999px;padding:5px 8px;background:#f5efeb}.tag.blue{background:var(--sky)}.tag.yellow{background:var(--custard)}
+.seller-row{display:flex;gap:9px;align-items:center;margin-top:10px}.seller-row .avatar{width:34px;height:34px;font-size:10px}.seller-name{font-size:11px;font-weight:900}.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.proof{background:#fbf8f4;border:1px solid var(--line);border-radius:13px;padding:10px}.proof b{font-size:10px}.proof span{display:block;font-size:9px;color:#8a7772;margin-top:3px}
+.eval{background:var(--mocha);color:#fff;border-radius:22px;padding:17px;margin-top:14px}.eval .eyebrow{color:var(--sky)}.score{font-size:36px;font-weight:900;line-height:1;margin:8px 0 4px;color:var(--custard)}.bar{height:7px;background:rgba(255,255,255,.15);border-radius:8px;overflow:hidden;margin:10px 0 13px}.bar i{display:block;height:100%;background:var(--custard);width:82%}.signal{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)}.signal:last-child{border-bottom:0}.signal-dot{width:23px;height:23px;border-radius:7px;background:var(--custard);color:var(--mocha);display:grid;place-items:center;font-size:11px;font-weight:900;flex:none}.signal-dot.warn{background:#ead2b4}.signal strong{font-size:11px}.signal p{font-size:9px;line-height:1.4;color:#eadfdf;margin:2px 0 0}
+.decision{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.decision button{padding:13px 9px;border-radius:14px;border:1px solid var(--line);font-weight:900;font-size:11px;cursor:pointer;min-width:0}.decision .ask{background:var(--sky);color:var(--mocha);border:0}.decision .skip{background:#fff;color:var(--mocha)}
+.message{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.bubble{background:#f5efeb;border-radius:15px 15px 15px 4px;padding:12px;font-size:11px;line-height:1.45}.small-link{border:0;background:none;color:#806a62;font-size:11px;text-decoration:underline;cursor:pointer;padding:9px 0}.toast{position:absolute;left:20px;right:20px;bottom:17px;background:var(--mocha);color:#fff;padding:12px 14px;border-radius:14px;font-size:10px;font-weight:700;transform:translateY(100px);transition:.25s;z-index:20}.toast.show{transform:none}.scan-angles{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:9px}.angle{font-size:8px;text-align:center;padding:7px 2px;border-radius:9px;background:#f5efeb;color:#7d6b65}.angle.done{background:var(--sky);color:var(--mocha)}.angle.active{background:var(--custard);color:var(--mocha);font-weight:900}
+.market{display:flex;flex-direction:column;gap:9px}.market-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:11px;cursor:pointer}.market-card:hover{border-color:#bfa9a1}.market-card .product-img{width:58px;height:58px;font-size:24px}.market-card .price{font-size:12px}.fb-context{font-size:9px;color:#8a7772;margin-top:5px}.topline{display:flex;align-items:center;justify-content:space-between}.verified{font-size:8px;background:var(--sky);padding:4px 7px;border-radius:999px;font-weight:900}
+@media(max-width:900px){body{padding:12px}.stage{display:block}.side{display:none}.phone{margin:auto}}@media(max-width:430px){body{padding:0;background:var(--cream)}.phone{width:100vw;height:100vh;border-radius:0;padding:0}.screen{border-radius:0}.phone:before{display:none}}
+
+.checklist-card{padding:15px}.check-count{font-size:10px;font-weight:900;background:var(--sky);padding:5px 8px;border-radius:999px}.checklist-items{margin-top:9px}.check-item{display:block;padding:11px 0;border-bottom:1px solid var(--line)}.check-item:last-child{border-bottom:0}.check-item strong{font-size:10px;display:block}.check-item span{font-size:9px;color:#8a7772;display:block;margin-top:2px}.lock-note{margin-top:11px;padding:9px 10px;border-radius:10px;background:#f7f1ed;font-size:9px;font-weight:800;color:#6e5e59}.cta:disabled{opacity:.42;cursor:not-allowed}.chat-header{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;margin-top:14px}.chat-header .avatar{width:36px;height:36px;font-size:10px}.online-dot{margin-left:auto;color:#5e8b70;font-size:13px}.pinned{background:var(--sky);border-radius:15px;padding:10px;margin-top:10px}.pinned-top{display:flex;align-items:center;gap:6px;font-size:10px}.pinned-top span:last-child{margin-left:auto;font-weight:900}.pinned-item{font-size:8.5px;padding:6px 0;border-top:1px solid rgba(67,47,47,.12);margin-top:6px}.pinned-item.done{opacity:1;font-weight:800}.chat{display:flex;flex-direction:column;gap:8px;margin:12px 0;min-height:180px}.chat-msg{max-width:84%;padding:10px 11px;border-radius:15px;font-size:10px;line-height:1.45}.chat-msg.seller{align-self:flex-start;background:#f0ece9;border-bottom-left-radius:4px}.chat-msg.buyer{align-self:flex-end;background:var(--mocha);color:#fff;border-bottom-right-radius:4px}.chat-msg.system{align-self:center;background:var(--custard);color:var(--mocha);font-size:8.5px;font-weight:800;text-align:center}.chat-proof{border-radius:12px;background:#fff;border:1px solid var(--line);padding:8px;margin-top:5px;font-size:9px}.chat-actions{display:flex;flex-direction:column;gap:7px}.chat-actions button{width:100%;border:1px solid var(--line);background:#fff;border-radius:13px;padding:10px;font-size:10px;font-weight:900;color:var(--mocha);cursor:pointer;text-align:left}.chat-actions button.primary{background:var(--sky);border:0}.chat-complete{background:#fff;border:1px solid var(--line);border-radius:17px;padding:13px}.chat-complete strong{display:block;font-size:11px}.chat-complete span{display:block;font-size:9px;color:#806f6f;margin-top:4px}.chat-complete .cta{font-size:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="stage">
+<aside class="side">
+<span class="pill">CLICKABLE MVP · V2</span>
+<h1>CheckMate<br>inside Facebook.</h1>
+<p>Same flowchart logic, but the interface only shows the next decision the buyer needs.</p>
+<div class="flow">
+<div><b class="dot active">1</b> Face + identity</div>
+<div><b class="dot">2</b> Marketplace</div>
+<div><b class="dot">3</b> Define category</div>
+<div><b class="dot">4</b> Product checklist</div>
+<div><b class="dot">5</b> Box Chat</div>
+</div>
+</aside>
+
+<main class="phone"><div class="screen">
+<div class="fbbar">
+<div class="fb-left"><div class="fb-logo">f</div><span>Facebook</span></div>
+<div class="fb-actions"><span>⌕</span><span>☰</span></div>
+</div>
+<div class="app">
+
+<section class="view active" id="fb-menu">
+<div class="eyebrow">Facebook</div><h2 style="margin-bottom:6px">Menu</h2><p class="sub">Your Facebook shortcuts.</p>
+<div class="fb-menu-grid" style="margin-top:18px">
+<button class="fb-menu-item"><span>👤</span><b>Profile</b></button>
+<button class="fb-menu-item"><span>▣</span><b>Marketplace</b></button>
+<button class="fb-menu-item"><span>▶</span><b>Watch</b></button>
+<button class="fb-menu-item"><span>▣</span><b>Events</b></button>
+<button class="fb-menu-item"><span>🔖</span><b>Saved</b></button>
+<button class="fb-menu-item"><span>♧</span><b>Memories</b></button>
+<button class="fb-menu-item"><span>👥</span><b>Groups</b></button>
+<button class="fb-menu-item"><span>🎮</span><b>Gaming</b></button>
+<button class="fb-menu-item"><span>◉</span><b>Reels</b></button>
+<button class="fb-menu-item"><span>✚</span><b>Friends</b></button>
+<button class="fb-menu-item checkmate-item" onclick="go('home')"><span>✓</span><b>CheckMate</b></button>
+</div>
+</section>
+
+<section class="view" id="home">
+<div class="eyebrow">Facebook function</div><h2>CheckMate</h2><p class="sub">A quick check before you buy.</p>
+<div class="hero"><div class="eyebrow">BEFORE YOU BUY</div><h3 style="font-size:23px;margin-top:8px">Check the product.<br>Know your next move.</h3><p class="sub">Verify your identity, review the listing, and get a simple buying checklist.</p><button class="cta" onclick="go('liveness')">Start CheckMate →</button></div>
+<div class="section-title">How it works</div>
+<div class="stack">
+<div class="choice"><div style="display:flex;gap:10px;align-items:center"><div class="iconbox">◉</div><div><strong>Verify</strong><span>7-angle face scan</span></div></div><span class="right">›</span></div>
+<div class="choice"><div style="display:flex;gap:10px;align-items:center"><div class="iconbox">▣</div><div><strong>Check a listing</strong><span>Seller + product proof</span></div></div><span class="right">›</span></div>
+<div class="choice"><div style="display:flex;gap:10px;align-items:center"><div class="iconbox">✓</div><div><strong>Get your next move</strong><span>Ask seller or skip</span></div></div><span class="right">›</span></div>
+</div>
+</section>
+
+<section class="view" id="liveness">
+<button class="back" onclick="go('home')">← Back</button><div class="eyebrow">01 / Identity</div><h2>Quick face check</h2><p class="sub">Scan your face from 7 angles for liveness.</p>
+<div class="scan"><div class="face"></div><div class="scanline"></div><div class="scan-label">30,000 infrared points • 7 angles</div></div>
+<div class="points"><b>◉</b><span><strong>30,000 infrared points</strong><br>7-angle scan in progress</span></div>
+<div class="scan-angles">
+<div class="angle done">Frontal<br>0°</div><div class="angle done">Left<br>-90°</div><div class="angle done">Right<br>+90°</div><div class="angle done">Left ¾<br>-45°</div>
+<div class="angle done">Right ¾<br>+45°</div><div class="angle done">Bottom-up<br>Pitch ↑</div><div class="angle active">Top-down<br>Pitch ↓</div><div class="angle">7 / 7</div>
+</div>
+<button class="cta" onclick="go('profile-link')">Scan complete →</button>
+<p class="note">MVP simulation: camera/biometric capture is not actually stored.</p>
+</section>
+
+<section class="view" id="profile-link">
+<button class="back" onclick="go('liveness')">← Back</button><div class="eyebrow">02 / Identity</div><h2>Is this you?</h2><p class="sub">One existing CheckMate profile is linked to this account.</p>
+<div class="profile" style="margin:16px 0"><div class="avatar">M</div><div><strong style="font-size:12px">Minh Tran</strong><div class="note">Verified profile</div></div><span class="status" style="margin-left:auto">Linked</span></div>
+<div class="stack"><button class="choice" onclick="go('reauth')"><div><strong>Yes, this is my profile</strong><span>Re-authenticate to continue</span></div><span class="right">›</span></button><button class="choice" onclick="go('recover')"><div><strong>No, not my profile</strong><span>Recover or create a profile</span></div><span class="right">›</span></button></div>
+</section>
+
+<section class="view" id="reauth"><button class="back" onclick="go('profile-link')">← Back</button><div class="eyebrow">Re-authenticate</div><h2>Welcome back.</h2><p class="sub">Confirm your CheckMate profile.</p><div class="card" style="margin-top:16px"><div class="form-row"><label>Passcode</label><input value="••••••" readonly></div><div class="status">Identity confirmed</div></div><button class="cta" onclick="go('browse')">Continue →</button></section>
+
+<section class="view" id="recover"><button class="back" onclick="go('profile-link')">← Back</button><div class="eyebrow">Profile</div><h2>Let's get you set up.</h2><p class="sub">Choose what you want to do next.</p><div class="stack" style="margin-top:16px"><button class="choice" onclick="go('create-profile')"><div><strong>Create new profile</strong><span>Name, age, phone, avatar</span></div><span class="right">›</span></button><button class="choice" onclick="go('recover-profile')"><div><strong>Recover existing profile</strong><span>Find your previous CheckMate account</span></div><span class="right">›</span></button></div></section>
+
+<section class="view" id="create-profile"><button class="back" onclick="go('recover')">← Back</button><div class="eyebrow">Create profile</div><h2>Your CheckMate profile</h2><div style="margin-top:14px"><div class="form-row"><label>Name</label><input value="Minh Tran"></div><div class="form-row"><label>Age</label><input value="29"></div><div class="form-row"><label>Phone</label><input value="+84 9•• ••• •••"></div></div><button class="cta" onclick="go('verification')">Run verification →</button></section>
+
+<section class="view" id="recover-profile"><button class="back" onclick="go('recover')">← Back</button><div class="eyebrow">Recover</div><h2>Find your profile</h2><p class="sub">Use your verified phone number.</p><div class="form-row" style="margin-top:16px"><label>Phone</label><input value="+84 9•• ••• •••"></div><button class="cta" onclick="toast('Profile recovered');go('browse')">Recover profile →</button></section>
+
+<section class="view" id="verification"><div class="eyebrow">Verification</div><h2>Verification approved.</h2><div class="card" style="margin-top:18px;text-align:center;padding:28px"><div style="font-size:42px">✓</div><h3>You're ready</h3><p class="sub">Your new profile can use CheckMate.</p></div><button class="cta" onclick="go('browse')">Enter CheckMate →</button></section>
+
+<section class="view" id="browse">
+<div class="topline"><div><div class="eyebrow">CheckMate Home</div><h2>Marketplace</h2></div></div>
+<p class="sub">Listings from sellers on Facebook.</p>
+<div class="section-title">Your profile</div>
+<div class="profile" onclick="go('profile-home')" style="cursor:pointer;margin-bottom:14px"><div class="avatar">M</div><div><strong style="font-size:11px">Minh Tran</strong><div class="note">CheckMate member</div></div><span style="margin-left:auto">›</span></div>
+<div class="section-title" style="margin-top:8px">Marketplace</div>
+<div class="market" style="margin-top:8px">
+<div class="market-card" onclick="selectProduct('phone')"><div class="product"><div class="product-img">📱</div><div class="meta"><div class="topline"><h3>iPhone 15 Pro 256GB</h3><span class="verified">SELLER ✓</span></div><div class="fb-context">Pre-owned • Sam Mobile</div><div class="price">₫18,500,000</div><div class="tags"><span class="tag yellow">Below avg. price</span><span class="tag">Used</span></div></div></div></div>
+<div class="market-card" onclick="selectProduct('shoe')"><div class="product"><div class="product-img">👟</div><div class="meta"><div class="topline"><h3>Limited Edition Runner</h3><span class="verified">SELLER ✓</span></div><div class="fb-context">Pre-owned • RunLab</div><div class="price">₫2,900,000</div><div class="tags"><span class="tag blue">Popular</span><span class="tag">Used</span></div></div></div></div>
+<div class="market-card" onclick="selectProduct('bag')"><div class="product"><div class="product-img">👜</div><div class="meta"><div class="topline"><h3>Classic Mini Shoulder Bag</h3><span class="verified">SELLER ✓</span></div><div class="fb-context">Pre-owned • Luxe Room</div><div class="price">₫32,000,000</div><div class="tags"><span class="tag yellow">High value</span><span class="tag">Used</span></div></div></div></div>
+</div>
+</section>
+
+<section class="view" id="profile-home"><button class="back" onclick="go('browse')">← Marketplace</button><div class="eyebrow">My profile</div><div class="profile" style="margin-top:14px"><div class="avatar">M</div><div><strong style="font-size:13px">Minh Tran</strong><div class="note">Verified CheckMate profile</div></div></div><div class="section-title">Activity</div><div class="card"><strong style="font-size:11px">Recent checks</strong><div class="note" style="margin-top:5px">1 marketplace check completed</div></div><button class="cta" onclick="go('browse')">Browse listings →</button></section>
+
+<section class="view" id="product">
+<button class="back" onclick="go('browse')">← Marketplace</button><div class="eyebrow" id="p-type">USED PHONE</div><h2 id="p-title">iPhone 15 Pro 256GB</h2>
+<div class="card" style="margin-top:14px"><div class="product"><div class="product-img" id="p-icon">📱</div><div class="meta"><div class="price" id="p-price">₫18,500,000</div><div class="note" id="p-location">Pre-owned • Ho Chi Minh City</div></div></div>
+<div class="seller-row"><div class="avatar" id="p-avatar">S</div><div><div class="seller-name" id="p-seller">Sam Mobile</div><div class="note" id="p-code">Seller code: SM-4821</div></div><span class="verified" style="margin-left:auto">FB seller</span></div></div>
+<div class="section-title">Product details</div><div class="proof-grid" id="product-details"></div>
+<div class="section-title">Seller-uploaded proof</div><div class="seller-uploaded" id="seller-uploaded"></div>
+<p style="text-align:center;font-size:10px;line-height:1.4;color:#806f6b;margin:10px 10px 8px">
+  Not sure how to verify the product or collect the right evidence?<br>
+  Let CheckMate generate a checklist for you.
+</p>
+<button class="cta" onclick="go('define-category')">Generate checklist →</button>
+</section>
+
+<section class="view" id="define-category">
+<button class="back" onclick="go('product')">← Product</button><div class="eyebrow">03 / Define category</div><h2>Confirm the product.</h2><p class="sub">CheckMate uses these details to build the right checklist.</p>
+<div class="card" style="margin-top:15px"><div class="form-row"><label>Product</label><input id="cat-product" value="iPhone 15 Pro 256GB"></div><div class="form-row"><label>Category</label><input id="cat-category" value="Used phone"></div><div class="form-row"><label>Condition</label><input id="cat-condition" value="Pre-owned • Grade A"></div><div class="form-row"><label>Listed price</label><input id="cat-price" value="₫18,500,000"></div></div>
+<button class="cta" onclick="confirmCategory()">Confirm & create checklist →</button>
+</section>
+
+<section class="view" id="checklist">
+<button class="back" onclick="go('define-category')">← Category</button><div class="eyebrow">04 / AI checklist</div><h2>Before buying.</h2><p class="sub">CheckMate built these checks from the product details.</p>
+<div class="card checklist-card" style="margin-top:15px"><div class="topline"><strong style="font-size:12px">Buyer checklist</strong><span class="check-count" id="check-count">0 / 5</span></div><div id="checklist-items" class="checklist-items"></div><div class="lock-note" id="lock-note">The seller completes these checks with you in Messenger.</div></div>
+<button class="cta" id="open-chat-btn" onclick="go('inbox')">Open Messenger →</button>
+</section>
+
+<section class="view" id="inbox">
+<button class="back" onclick="go('checklist')">← Checklist</button><div class="eyebrow">05 / Box Chat</div><h2>Message the seller.</h2><p class="sub">Work through the checklist together.</p>
+<div class="chat-header"><div class="avatar" id="chat-avatar">S</div><div><div class="seller-name" id="chat-seller">Sam Mobile</div><div class="note" id="chat-code">Seller code: SM-4821</div></div><span class="online-dot">●</span></div>
+<div class="pinned"><div class="pinned-top"><span>📌</span><strong>CheckMate checklist</strong><span id="pin-count">0 / 5</span></div><div id="pinned-items"></div></div>
+<div class="chat" id="chat"></div>
+<div class="chat-actions" id="chat-actions"></div>
+</section>
+
+</div><div class="toast" id="toast"></div></div></main>
+
+<aside class="side" style="justify-self:end"><span class="pill">USER-CONTEXT FLOW</span><h1 style="font-size:30px">Checklist before buying.</h1><p>CheckMate identifies the product first, then builds product-specific checks and moves the buyer into Messenger.</p><div class="card" style="background:rgba(255,255,255,.7)"><strong style="font-size:12px">MVP principle</strong><p class="note" style="font-size:11px">The profile verifies the person. The product defines the checklist. Messenger completes the final step.</p></div></aside>
+</div>
+
+<script>
+const data={
+phone:{type:'USED PHONE',title:'iPhone 15 Pro 256GB',icon:'📱',price:'₫18,500,000',location:'Pre-owned • Ho Chi Minh City',seller:'Sam Mobile',code:'SM-4821',category:'Used phone',condition:'Pre-owned • Grade A',details:[['Model','A3102 • 256GB'],['IMEI','•••• 7219'],['Condition','Used • Grade A'],['Listed','12 Aug 2026']],uploaded:[['📱','Front photo','Uploaded by seller'],['🔍','Camera / body','Uploaded by seller'],['🔢','IMEI label','Uploaded by seller']],checklist:[['Show all sides of the phone','Photos from front, back and edges'],['Share IMEI / serial number','Clear number or settings screen'],['Show battery health','Battery health and device status'],['Send a working-condition video','Power, screen, camera and sound'],['Show purchase proof','Original receipt or purchase record']]},
+shoe:{type:'USED SHOES',title:'Limited Edition Runner',icon:'👟',price:'₫2,900,000',location:'Pre-owned • Ho Chi Minh City',seller:'RunLab',code:'RL-1907',category:'Used shoes',condition:'Pre-owned • Good',details:[['Model','Runner LE 2026'],['Size','42 EU'],['Condition','Used • Good'],['Listed','21 Aug 2026']],uploaded:[['👟','Pair photo','Uploaded by seller'],['🔎','Logo / stitching','Uploaded by seller'],['🔢','Style code','Uploaded by seller']],checklist:[['Show all sides of the pair','Upper, sole, heel and toe'],['Show style / size code','Clear label or code photo'],['Show sole and wear','Close-up of outsole condition'],['Send a short video','Show pair from multiple angles'],['Show purchase proof','Receipt or original purchase record']]},
+bag:{type:'USED LUXURY BAG',title:'Classic Mini Shoulder Bag',icon:'👜',price:'₫32,000,000',location:'Pre-owned • Ho Chi Minh City',seller:'Luxe Room',code:'LR-6630',category:'Used luxury bag',condition:'Pre-owned • Excellent',details:[['Model','Classic Mini'],['Material','Leather'],['Condition','Used • Excellent'],['Listed','25 Aug 2026']],uploaded:[['👜','Bag front','Uploaded by seller'],['🔎','Hardware detail','Uploaded by seller'],['🔢','Date code','Uploaded by seller']],checklist:[['Show all sides of the bag','Front, back, base and interior'],['Show date / serial code','Clear code photo'],['Show hardware details','Logo, zipper and hardware close-ups'],['Send a short video','Show the bag in motion and inside'],['Show purchase / provenance proof','Receipt, card or original purchase record']]}
+};
+let current='phone';
+let completed=[];
+function $(id){return document.getElementById(id)}
+function go(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');document.querySelector('.app').scrollTop=0;if(id==='inbox')initChat()}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),1700)}
+function selectProduct(key){current=key;const d=data[key];$('p-type').textContent=d.type;$('p-title').textContent=d.title;$('p-icon').textContent=d.icon;$('p-price').textContent=d.price;$('p-location').textContent=d.location;$('p-seller').textContent=d.seller;$('p-code').textContent='Seller code: '+d.code;$('p-avatar').textContent=d.seller[0];$('product-details').innerHTML=d.details.map(x=>`<div class="proof"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');$('seller-uploaded').innerHTML=d.uploaded.map(x=>`<div class="uploaded-proof"><div class="proof-photo">${x[0]}</div><div class="proof-caption"><b>${x[1]}</b>${x[2]}</div></div>`).join('');go('product')}
+function renderCategory(){const d=data[current];$('cat-product').value=d.title;$('cat-category').value=d.category;$('cat-condition').value=d.condition;$('cat-price').value=d.price}
+function confirmCategory(){renderCategory();completed=[];renderChecklist();go('checklist')}
+function renderChecklist(){const d=data[current];$('checklist-items').innerHTML=d.checklist.map((x,i)=>`<div class="check-item"><strong>${x[0]}</strong><span>${x[1]}</span></div>`).join('');$('check-count').textContent=`${completed.length} / ${d.checklist.length}`;$('lock-note').textContent='The seller completes these checks with you in Messenger.';$('open-chat-btn').disabled=false}
+function initChat(){const d=data[current];$('chat-avatar').textContent=d.seller[0];$('chat-seller').textContent=d.seller;$('chat-code').textContent='Seller code: '+d.code;completed=[];renderPinned();renderChat();}
+function renderPinned(){const d=data[current];$('pin-count').textContent=`${completed.length} / ${d.checklist.length}`;$('pinned-items').innerHTML=d.checklist.map((x,i)=>`<div class="pinned-item ${completed.includes(i)?'done':''}">${completed.includes(i)?'✓':'○'} ${x[0]}</div>`).join('')}
+function addMsg(side,text){$('chat').insertAdjacentHTML('beforeend',`<div class="chat-msg ${side}">${text}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function renderChat(){const d=data[current];$('chat').innerHTML='';completed=[];renderPinned();addMsg('seller',`Hi! Thanks for your interest in the ${d.title}. I’m happy to share the details you need.`);addMsg('buyer',`Thanks. I’d like to check a few things before buying.`);renderActions()}
+function renderActions(){const d=data[current];const next=d.checklist.findIndex((_,i)=>!completed.includes(i));if(next===-1){$('chat-actions').innerHTML='';addMsg('seller','That’s everything from my side. Let me know if you have any other questions.');addMsg('buyer','Thanks. I’ll review everything and get back to you.');return}$('chat-actions').innerHTML=`<button class="primary" onclick="sellerCompletes(${next})">Ask about: ${d.checklist[next][0]} →</button>`}
+function sellerCompletes(i){const d=data[current];$('chat-actions').innerHTML='';addMsg('buyer',`Could you please ${d.checklist[i][0].toLowerCase()}?`);setTimeout(()=>{const responses={phone:[`Sure — I’ll send clear photos from every side of the phone.`,`Sure. I’ll send the IMEI / serial number now.`,`Here’s the battery health and device status screen.`,`Sending a short video showing the phone working.`,`Here’s the original purchase receipt / purchase record.`],shoe:[`Sure — here are clear photos of the pair from every side.`,`Here’s the style and size code.`,`I’ll send a close-up of the sole and wear.`,`Here’s a short video showing the pair from multiple angles.`,`Here’s the original purchase receipt.`],bag:[`Sure — here are photos of the bag from every side, including the interior.`,`Here’s a clear photo of the date / serial code.`,`I’ll send close-ups of the hardware and logo.`,`Here’s a short video showing the bag and interior.`,`Here’s the purchase / provenance proof.`]};const response=(responses[current]||responses.phone)[i]||'Sure — here is the requested information.';addMsg('seller',response);if(!completed.includes(i))completed.push(i);completed.sort((a,b)=>a-b);renderPinned();renderChecklist();if(completed.length<d.checklist.length){renderActions()}else{addMsg('system','CheckMate • 5/5 checks completed');addMsg('seller','Everything on the checklist is now covered. If you’re still interested, we can continue here.');addMsg('buyer','Great, thank you. I’ll review the information and we can continue from here.');$('chat-actions').innerHTML=`<button class="primary" onclick="toast('Continue the conversation with the seller.')">Continue conversation →</button>`}},500)}
+function resetForProduct(){completed=[];renderChecklist()}
+renderCategory();renderChecklist();
+</script>
+</body>
+</html>
